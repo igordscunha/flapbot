@@ -1,12 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
-const { getLyrics } = require('genius-lyrics');
+const Genius = require('genius-lyrics');
 
-const geniusClient = {
-	apiKey: process.env.GENIUS_API_TOKEN,
-	title: '',
-	artist: '',
-	optimizeQuery: true,
-};
+const Client = new Genius.Client(process.env.GENIUS_API_CLIENT_ACCESS_TOKEN);
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -19,35 +14,32 @@ module.exports = {
 	async execute(interaction) {
 		await interaction.deferReply();
 
-		const songQuery = interaction.options.getString('musica');
-		geniusClient.title = songQuery;
-
+		const musica = interaction.options.getString('musica');
+		
 		try {
-			const lyrics = await getLyrics(geniusClient);
+			const searches = await Client.songs.search(musica);
+			const firstSong = searches[0];
+			// console.log("About the Song: \n", firstSong, "\n"); //debug
+			const lyrics = await firstSong.lyrics();
+			// console.log("Lyrics of the Song:\n", lyrics, "\n"); //debug
 
 			if (!lyrics) {
-				await interaction.editReply(`Não consegui encontrar a letra para "${songQuery}". Tente ser mais específico!`);
+				await interaction.editReply(`Não consegui encontrar a letra para "${firstSong}".`);
 				return;
 			}
 
 			// Discord tem um limite de 4096 caracteres para a descrição do Embed
-			const chunks = lyrics.match(/[\s\S]{1,4000}/g) || [];
+			const chunks = lyrics.match(/\[[\s\S]{0,3999}/g) || [];
+			const matchDescricao = lyrics.match(/\[([^\]]*)\]/) || [];
+			const descricao = matchDescricao ? matchDescricao[1] : '';
 
-			const firstEmbed = new EmbedBuilder()
+			const embed = new EmbedBuilder()
 				.setColor('#ffff00')
-				.setTitle(`🎤 Letra de ${songQuery}`)
+				.setTitle(`🎤 Letra de ${firstSong.title} - ${firstSong.artist.name}`)
 				.setDescription(chunks[0])
 				.setFooter({ text: 'Powered by Genius' });
 
-			await interaction.editReply({ embeds: [firstEmbed] });
-
-			// Envia o resto da letra em mensagens seguintes, se houver
-			for (let i = 1; i < chunks.length; i++) {
-				const followupEmbed = new EmbedBuilder()
-					.setColor('#ffff00')
-					.setDescription(chunks[i]);
-				await interaction.followUp({ embeds: [followupEmbed] });
-			}
+			await interaction.editReply({ embeds: [embed] });
 
 		}
 		catch (error) {
