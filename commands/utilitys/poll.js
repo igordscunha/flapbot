@@ -2,7 +2,7 @@ const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 
 module.exports = {
 	data: new SlashCommandBuilder()
-		.setName('poll')
+		.setName('enquete')
 		.setDescription('Cria uma enquete com até 10 opções.')
 		.addStringOption(option =>
 			option.setName('pergunta')

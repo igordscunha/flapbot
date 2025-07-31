@@ -3,7 +3,7 @@ const axios = require('axios');
 
 module.exports = {
 	data: new SlashCommandBuilder()
-		.setName('sports')
+		.setName('esportes')
 		.setDescription('Mostra os últimos resultados de uma liga esportiva.')
 		.addStringOption(option =>
 			option.setName('liga')

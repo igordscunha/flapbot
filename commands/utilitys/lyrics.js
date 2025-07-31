@@ -5,7 +5,7 @@ const Client = new Genius.Client(process.env.GENIUS_API_CLIENT_ACCESS_TOKEN);
 
 module.exports = {
 	data: new SlashCommandBuilder()
-		.setName('lyrics')
+		.setName('letra')
 		.setDescription('Busca a letra de uma música.')
 		.addStringOption(option =>
 			option.setName('musica')

@@ -2,7 +2,7 @@ const { SlashCommandBuilder } = require('discord.js');
 
 module.exports = {
 	data: new SlashCommandBuilder()
-		.setName('remind')
+		.setName('lembrete')
 		.setDescription('Define um lembrete.')
 		.addStringOption(option =>
 			option.setName('quando')
