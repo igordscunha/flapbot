@@ -19,7 +19,7 @@ module.exports = {
 		const question = interaction.options.getString('pergunta');
 
 		try {
-			const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+			const model = genAI.getGenerativeModel({ model: 'gemini-2.5-pro' });
 			const result = await model.generateContent(question);
 			const response = await result.response;
 			const text = response.text();
