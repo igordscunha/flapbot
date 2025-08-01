@@ -24,17 +24,28 @@ module.exports = {
 			const response = await result.response;
 			const text = response.text();
 
+			const discordLimit = 4096;
+			const messageLimit = 1000;
+			const firstChunk = text.substring(0, discordLimit);
+
 			const embed = new EmbedBuilder()
 				.setColor('#4f46e5')
 				.setTitle('🧠 Pergunta para a IA')
-				.addFields(
-					{ name: 'Sua pergunta: ', value: question },
-					{ name: 'Resposta da IA: ', value: text.substring(0, 1020) },
-				)
+				.addFields({ name: 'Sua pergunta: ', value: question })
+				.setDescription(firstChunk)
 				.setTimestamp()
 				.setFooter({ text: 'Powered by Google Gemini' });
 
 			await interaction.editReply({ embeds: [embed] });
+
+			if (text.length > discordLimit){
+				const remainingText = text.substring(discordLimit);
+				const remainingChunks = remainingText.match(new RegExp(`.{1,${messageLimit}}`, 'g'));
+
+				for (const chunk of remainingChunks){
+					await interaction.followUp(chunk);
+				}
+			}
 		}
 		catch (error) {
 			console.error('Erro na API do Gemini: ', error);
