@@ -30,8 +30,6 @@ module.exports = {
 
 			// Discord tem um limite de 4096 caracteres para a descrição do Embed
 			const chunks = lyrics.match(/\[[\s\S]{0,3999}/g) || [];
-			const matchDescricao = lyrics.match(/\[([^\]]*)\]/) || [];
-			const descricao = matchDescricao ? matchDescricao[1] : '';
 
 			const embed = new EmbedBuilder()
 				.setColor('#ffff00')
