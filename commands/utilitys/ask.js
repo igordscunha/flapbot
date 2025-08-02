@@ -31,8 +31,10 @@ module.exports = {
 			const embed = new EmbedBuilder()
 				.setColor('#4f46e5')
 				.setTitle('🧠 Pergunta para a IA')
-				.addFields({ name: 'Sua pergunta: ', value: question })
-				.setDescription(firstChunk)
+				.addFields(
+					{ name: 'Sua pergunta: ', value: question },
+					{ name: 'Resposta da IA: ', value: firstChunk }
+				)
 				.setTimestamp()
 				.setFooter({ text: 'Powered by Google Gemini' });
 
