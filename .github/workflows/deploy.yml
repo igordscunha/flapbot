@@ -26,5 +26,5 @@ jobs:
         ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
           cd /opt/botbpi
           git pull origin main
-          sudo systemctl restart botbpi.service
+          sudo systemctl restart discord-bot.service
         EOF
