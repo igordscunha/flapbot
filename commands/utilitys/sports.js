@@ -20,6 +20,8 @@ const leagueNames = {
   '4387': 'NBA (Basquete)'
 };
 
+const apiKey = process.env.SPORTS_API_KEY;
+
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('esportes')
@@ -30,7 +32,7 @@ module.exports = {
 				.setDescription('Ver últimos resultados de uma liga')
 				.addStringOption(option => 
 					option
-						.setName('id')
+						.setName('nome')
 						.setDescription('Escolha a liga')
 						.setRequired(true)
 						.addChoices(
@@ -46,8 +48,8 @@ module.exports = {
 							{ name: 'NFL', value: '4391' },
 							{ name: 'NBA (Basquete)', value: '4387' },
 						),
-				),
-			)
+          ),
+        )
 		.addSubcommand(option =>
 			option
 				.setName('time')
@@ -62,12 +64,11 @@ module.exports = {
 
 	async execute(interaction) {
     await interaction.deferReply();
-    const apiKey = process.env.SPORTS_API_KEY;
     const sub = interaction.options.getSubcommand();
 
     // Lógica da liga
     if (sub === 'liga') {
-      const leagueId = interaction.options.getString('id');
+      const leagueId = interaction.options.getString('nome');
       const leagueDisplay = leagueNames[leagueId] || 'Essa liga';
       const url = `https://www.thesportsdb.com/api/v1/json/${apiKey}/eventspastleague.php?id=${leagueId}`;
 
@@ -80,7 +81,7 @@ module.exports = {
 
         const embed = new EmbedBuilder()
           .setColor('#ef4444')
-          .setTitle(`🏆 Últimos Resultados: ${leagueDisplay}`)
+          .setTitle(`🏆 Último Resultado: ${leagueDisplay}`)
           .setTimestamp();
 
         events.slice(0, 5).forEach(ev => {
@@ -142,8 +143,8 @@ module.exports = {
           .setTitle(`Resultados e Agenda: ${strTeam}`)
           .setThumbnail(strTeamBadge)
           .addFields(
-            { name: 'Últimas 3 Partidas', value: lastField, inline: false },
-            { name: 'Próximas 3 Partidas', value: nextField, inline: false }
+            { name: 'Última Partida', value: lastField, inline: false },
+            { name: 'Próxima Partida', value: nextField, inline: false }
           )
           .setTimestamp()
           .setFooter({ text: 'Powered by TheSportsDB' });
