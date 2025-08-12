@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder, MessageFlags } = require('discord.js');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -36,16 +36,16 @@ module.exports = {
 			delay = reminderTime.getTime() - now.getTime();
 		}
 		else {
-			await interaction.reply({ content: 'Formato de tempo inválido. Use "10m" para 10 minutos, "1h" para 1 hora, ou "14:30" para um horário específico.', ephemeral: true });
+			await interaction.reply({ content: 'Formato de tempo inválido. Use "10m" para 10 minutos, "1h" para 1 hora, ou "14:30" para um horário específico.'});
 			return;
 		}
 
 		if (delay <= 0 || delay > 2147483647) {
-			await interaction.reply({ content: 'Tempo inválido. O lembrete deve ser no futuro e em menos de 24 dias.', ephemeral: true });
+			await interaction.reply({ content: 'Tempo inválido. O lembrete deve ser no futuro e em menos de 24 dias.'});
 			return;
 		}
 
-		await interaction.reply({ content: `✅ Ok! Vou te lembrar sobre "${message}" em ${when}.`, ephemeral: true });
+		await interaction.reply({ content: `✅ Ok! Vou te lembrar sobre "${message}" em ${when}.`});
 
 		setTimeout(() => {
 			user.send(`⏰ **Lembrete:** ${message}`)

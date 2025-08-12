@@ -31,7 +31,7 @@ module.exports = {
 			.setTitle(`📊 Enquete: ${question}`)
 			.setDescription(options.join('\n\n'))
 			.setTimestamp()
-			.setFooter({ text: `Enquete criada por ${interaction.user.username}` });
+			.setFooter({ text: `Enquete criada por ${interaction.member.displayName}` });
 
 		const pollMessage = await interaction.reply({ embeds: [embed], fetchReply: true });
 

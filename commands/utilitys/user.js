@@ -7,7 +7,7 @@ module.exports = {
 		.setDescription('Informa sobre o usuário.'),
 
 	async execute(interaction) {
-		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-		await interaction.editReply(`${interaction.user.username} entrou pro bonde em ${interaction.member.joinedAt}.`);
+		await interaction.deferReply();
+		await interaction.editReply(`${interaction.member.displayName} entrou pro bonde em ${interaction.member.joinedAt}.`);
 	},
 };

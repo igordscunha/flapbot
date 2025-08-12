@@ -140,7 +140,7 @@ module.exports = {
 
         const embed = new EmbedBuilder()
           .setColor('#ef4444')
-          .setTitle(`Resultados e Agenda: ${strTeam}`)
+          .setTitle(`Resultado e Agenda: ${strTeam}`)
           .setThumbnail(strTeamBadge)
           .addFields(
             { name: 'Última Partida', value: lastField, inline: false },
