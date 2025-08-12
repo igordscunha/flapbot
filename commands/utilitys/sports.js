@@ -133,7 +133,7 @@ module.exports = {
         const nextField = nextArr.length
           ? nextArr.slice(0, 3).map(ev => {
               const opponent = ev.strHomeTeam === strTeam ? ev.strAwayTeam : ev.strHomeTeam;
-              const time = ev.strTime?.substring(0, 5) || '–';
+              const time = ev.strTimeLocal?.substring(0, 5) || '–';
               return `📅 ${formatDate(ev.dateEvent)} às **${time}**: vs **${opponent}**`;
             }).join('\n')
           : 'Nenhuma partida futura encontrada.';
