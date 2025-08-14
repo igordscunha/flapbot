@@ -1,5 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
-const db = require('quick.db');
+const { QuickDB } = require('quick.db');
+const db = new QuickDB();
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -12,8 +13,8 @@ module.exports = {
     async execute(interaction) {
         const user = interaction.options.getUser('usuario') || interaction.user;
         
-        const level = db.get(`level_${interaction.guild.id}_${user.id}`) || 1;
-        const xp = db.get(`xp_${interaction.guild.id}_${user.id}`) || 0;
+        const level = (await db.get(`level_${interaction.guild.id}_${user.id}`)) || 1;
+        const xp = (await db.get(`xp_${interaction.guild.id}_${user.id}`)) || 0;
         const nextLevelXP = 5 * (level ** 2) + 50 * level + 100;
 
         const embed = new EmbedBuilder()

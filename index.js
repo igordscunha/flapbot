@@ -1,7 +1,8 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Collection, GatewayIntentBits, Events, Partials } = require('discord.js');
-const db = require('quick.db');
+const { QuickDB } = require('quick.db');
+const db = new QuickDB();
 require('dotenv').config();
 
 // *************** // **************** //
@@ -98,13 +99,13 @@ client.on(Events.MessageCreate, async message => {
 
 // SISTEMA DE XP POR VOZ
 
-function updateVoiceXP() {
+async function updateVoiceXP() {
     client.guilds.cache.forEach(guild => {
-        guild.members.cache.forEach(member => {
+        guild.members.cache.forEach(async member => {
             if (member.voice.channel && !member.voice.serverDeaf && !member.voice.serverMute) {
                  const xpToGive = 10; // XP fixo por minuto em voz
-                 const currentXP = db.get(`xp_${guild.id}_${member.id}`) || 0;
-                 const currentLevel = db.get(`level_${guild.id}_${member.id}`) || 1;
+                 const currentXP = (await db.get(`xp_${guild.id}_${member.id}`)) || 0;
+                 const currentLevel = (await db.get(`level_${guild.id}_${member.id}`)) || 1;
                  const newXP = currentXP + xpToGive;
                  const nextLevelXP = 5 * (currentLevel ** 2) + 50 * currentLevel + 100;
 
