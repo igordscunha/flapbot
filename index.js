@@ -1,7 +1,10 @@
 const fs = require('node:fs');
 const path = require('node:path');
-const { Client, Collection, GatewayIntentBits } = require('discord.js');
+const { Client, Collection, GatewayIntentBits, Events, Partials } = require('discord.js');
+const db = require('quick.db');
 require('dotenv').config();
+
+// *************** // **************** //
 
 const client = new Client({ 
 	intents: [
@@ -11,8 +14,10 @@ const client = new Client({
 		GatewayIntentBits.GuildMessagePolls,
 		GatewayIntentBits.GuildMessageReactions,
 		GatewayIntentBits.GuildMembers,
-		GatewayIntentBits.MessageContent
-	] 
+		GatewayIntentBits.MessageContent,
+		GatewayIntentBits.GuildPresences
+	], 
+	partials: [Partials.Channel]
 });
 
 const token = process.env.DISCORD_TOKEN;
@@ -20,6 +25,7 @@ const token = process.env.DISCORD_TOKEN;
 client.commands = new Collection();
 client.cooldowns = new Collection();
 client.queues = new Map();
+const cooldowns = new Collection();
 
 const foldersPath = path.join(__dirname, 'commands');
 const commandFolders = fs.readdirSync(foldersPath);
@@ -51,6 +57,70 @@ for (const file of eventFiles) {
 	else {
 		client.on(event.name, (...args) => event.execute(...args));
 	}
+}
+
+client.once(Events.ClientReady, c => {
+	console.log(`Tudo pronto! Logado como ${c.user.tag}`);
+	setInterval(updateVoiceXP, 60000);
+})
+
+// SISTEMA DE XP POR MENSAGEM
+client.on(Events.MessageCreate, async message => {
+    if (message.author.bot || !message.guild) return;
+
+    // Cooldown para evitar spam de XP
+    if (cooldowns.has(message.author.id)) return;
+
+    const xpToGive = Math.floor(Math.random() * (25 - 15 + 1)) + 15; // XP entre 15 e 25
+    const currentXP = db.get(`xp_${message.guild.id}_${message.author.id}`) || 0;
+    const currentLevel = db.get(`level_${message.guild.id}_${message.author.id}`) || 1;
+    
+    const newXP = currentXP + xpToGive;
+    const nextLevelXP = 5 * (currentLevel ** 2) + 50 * currentLevel + 100;
+
+    if (newXP >= nextLevelXP) {
+        const newLevel = currentLevel + 1;
+        db.set(`level_${message.guild.id}_${message.author.id}`, newLevel);
+        db.set(`xp_${message.guild.id}_${message.author.id}`, 0); // Reseta o XP para o novo nível
+        message.channel.send(`${message.author}, você subiu para o nível **${newLevel}**! 🎉`);
+        // Lógica para dar cargos pra ser adicionada futuramente
+    } else {
+        db.set(`xp_${message.guild.id}_${message.author.id}`, newXP);
+    }
+    
+    // Adiciona cooldown de 60 segundos
+    cooldowns.set(message.author.id, true);
+    setTimeout(() => {
+        cooldowns.delete(message.author.id);
+    }, 60000);
+});
+
+
+// SISTEMA DE XP POR VOZ
+
+function updateVoiceXP() {
+    client.guilds.cache.forEach(guild => {
+        guild.members.cache.forEach(member => {
+            if (member.voice.channel && !member.voice.serverDeaf && !member.voice.serverMute) {
+                 const xpToGive = 10; // XP fixo por minuto em voz
+                 const currentXP = db.get(`xp_${guild.id}_${member.id}`) || 0;
+                 const currentLevel = db.get(`level_${guild.id}_${member.id}`) || 1;
+                 const newXP = currentXP + xpToGive;
+                 const nextLevelXP = 5 * (currentLevel ** 2) + 50 * currentLevel + 100;
+
+                 if (newXP >= nextLevelXP) {
+                    const newLevel = currentLevel + 1;
+                    db.set(`level_${guild.id}_${member.id}`, newLevel);
+                    db.set(`xp_${guild.id}_${member.id}`, 0);
+                    // Encontrar um canal de texto para anunciar
+                    const channel = guild.channels.cache.find(ch => ch.name === 'geral' || ch.type === 0);
+                    if (channel) channel.send(`${member}, você subiu para o nível **${newLevel}** por sua atividade em voz! 🎙️`);
+                 } else {
+                    db.set(`xp_${guild.id}_${member.id}`, newXP);
+                 }
+            }
+        });
+    });
 }
 
 client.login(token);
