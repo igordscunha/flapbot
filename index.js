@@ -108,6 +108,15 @@ async function updateVoiceXP() {
                  const currentLevel = (await db.get(`level_${guild.id}_${member.id}`)) || 1;
                  const newXP = currentXP + xpToGive;
                  const nextLevelXP = 5 * (currentLevel ** 2) + 50 * currentLevel + 100;
+                 const mensagens = [
+                    "Tá ficando fortin, ein 💪",
+                    "Vagabundo tá entendendo nada 👀",
+                    "Tá ficando brabin de te pegar...",
+                    "Hora de jogar o jet na água e dar esse role",
+                    "Quer namorar comigo? 🥹",
+                    "Você tá ficando até mais bonito...",
+                    "O capitalismo precisa ruir..."
+                 ]
 
                  if (newXP >= nextLevelXP) {
                     const newLevel = currentLevel + 1;
@@ -115,7 +124,7 @@ async function updateVoiceXP() {
                     db.set(`xp_${guild.id}_${member.id}`, 0);
                     // Encontrar um canal de texto para anunciar
                     const channel = guild.channels.cache.find(ch => ch.name === 'geral' || ch.type === 0);
-                    if (channel) channel.send(`${member}, você subiu para o nível **${newLevel}** por sua atividade em voz! 🎙️`);
+                    if (channel) channel.send(`${member}, você subiu para o nível **${newLevel}**! ${mensagens[Math.random(0, 6)]}`);
                  } else {
                     db.set(`xp_${guild.id}_${member.id}`, newXP);
                  }
