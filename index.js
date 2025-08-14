@@ -21,6 +21,17 @@ const client = new Client({
 	partials: [Partials.Channel]
 });
 
+const mensagens = [
+    "Tá ficando fortin, ein 💪",
+    "Vagabundo tá entendendo nada 👀",
+    "Tá ficando brabin de te pegar...",
+    "Hora de jogar o jet na água e dar esse role",
+    "Quer namorar comigo? 🥹",
+    "Você tá ficando até mais bonito... 👀",
+    "O capitalismo precisa ruir..."
+];
+const indice = Math.floor(Math.random() * mensagens.length);
+
 const token = process.env.DISCORD_TOKEN;
 
 client.commands = new Collection();
@@ -83,7 +94,7 @@ client.on(Events.MessageCreate, async message => {
         const newLevel = currentLevel + 1;
         db.set(`level_${message.guild.id}_${message.author.id}`, newLevel);
         db.set(`xp_${message.guild.id}_${message.author.id}`, 0); // Reseta o XP para o novo nível
-        message.channel.send(`${message.author}, você subiu para o nível **${newLevel}**! 🎉`);
+        message.channel.send(`${message.author}, você subiu para o nível **${newLevel}**! ${mensagens[indice]}`);
         // Lógica para dar cargos pra ser adicionada futuramente
     } else {
         db.set(`xp_${message.guild.id}_${message.author.id}`, newXP);
@@ -97,6 +108,7 @@ client.on(Events.MessageCreate, async message => {
 });
 
 
+
 // SISTEMA DE XP POR VOZ
 
 async function updateVoiceXP() {
@@ -108,15 +120,7 @@ async function updateVoiceXP() {
                  const currentLevel = (await db.get(`level_${guild.id}_${member.id}`)) || 1;
                  const newXP = currentXP + xpToGive;
                  const nextLevelXP = 5 * (currentLevel ** 2) + 50 * currentLevel + 100;
-                 const mensagens = [
-                    "Tá ficando fortin, ein 💪",
-                    "Vagabundo tá entendendo nada 👀",
-                    "Tá ficando brabin de te pegar...",
-                    "Hora de jogar o jet na água e dar esse role",
-                    "Quer namorar comigo? 🥹",
-                    "Você tá ficando até mais bonito...",
-                    "O capitalismo precisa ruir..."
-                 ]
+
 
                  if (newXP >= nextLevelXP) {
                     const newLevel = currentLevel + 1;
@@ -124,7 +128,7 @@ async function updateVoiceXP() {
                     db.set(`xp_${guild.id}_${member.id}`, 0);
                     // Encontrar um canal de texto para anunciar
                     const channel = guild.channels.cache.find(ch => ch.name === 'geral' || ch.type === 0);
-                    if (channel) channel.send(`${member}, você subiu para o nível **${newLevel}**! ${mensagens[Math.random(0, 6)]}`);
+                    if (channel) channel.send(`${member}, você subiu para o nível **${newLevel}**! ${mensagens[indice]}`);
                  } else {
                     db.set(`xp_${guild.id}_${member.id}`, newXP);
                  }

@@ -19,9 +19,9 @@ module.exports = {
 
         const embed = new EmbedBuilder()
             .setColor('#8b5cf6')
-            .setAuthor({ name: `Rank de ${user.username}`, iconURL: user.displayAvatarURL() })
+            .setAuthor({ name: `Rank de ${user.displayName}`, iconURL: user.displayAvatarURL() })
             .addFields(
-                { name: 'Nível', value: `**${level}**`, inline: true },
+                { name: 'Level', value: `**${level}**`, inline: true },
                 { name: 'XP', value: `**${xp} / ${nextLevelXP}**`, inline: true }
             )
             .setTimestamp();
