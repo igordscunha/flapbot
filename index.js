@@ -22,13 +22,27 @@ const client = new Client({
 });
 
 const mensagens = [
-    "Tá ficando fortin, ein 💪",
+    "Tu ta ficando fortin, ein 💪",
     "Vagabundo tá entendendo nada 👀",
     "Tá ficando brabin de te pegar...",
     "Hora de jogar o jet na água e dar esse role",
     "Quer namorar comigo? 🥹",
     "Você tá ficando até mais bonito... 👀",
-    "O capitalismo precisa ruir..."
+    "O capitalismo precisa ruir...",
+    "Hoje o gelo é por sua conta!",
+    "Cruuuuuuuuuzes",
+    "Gostozin no azeite aiiii 🥵",
+    "Glub glub... 💦💦",
+    "Aaaaaaaii que delíciaaaa",
+    "Si señor 🫡",
+    "Que cintura ignorante 😳",
+    "Coisa linda de se ver!",
+    "Me paga um balde hoje?",
+    "Tadalaboy! 😈",
+    "Vai que vai companheiro!",
+    "Você é muito brabo! 👏",
+    "Quero ser igual você quando crescer! 🤩",
+    "Te amo, ta? ❤️"
 ];
 
 const token = process.env.DISCORD_TOKEN;
