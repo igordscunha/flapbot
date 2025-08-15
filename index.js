@@ -127,7 +127,7 @@ client.on(Events.MessageCreate, async message => {
 async function updateVoiceXP() {
     client.guilds.cache.forEach(guild => {
         guild.members.cache.forEach(async member => {
-            if (member.voice.channel && !member.voice.serverDeaf && !member.voice.serverMute) {
+            if (member.voice.channel && !member.voice.selfDeaf && !member.voice.serverMute) {
                  const xpToGive = 10; // XP fixo por minuto em voz
                  const currentXP = (await db.get(`xp_${guild.id}_${member.id}`)) || 0;
                  const currentLevel = (await db.get(`level_${guild.id}_${member.id}`)) || 1;
@@ -141,7 +141,7 @@ async function updateVoiceXP() {
                     db.set(`xp_${guild.id}_${member.id}`, 0);
                     // Encontrar um canal de texto para anunciar
                     const channel = guild.channels.cache.find(ch => ch.name === 'geral' || ch.type === 0);
-                    if (channel) channel.send(`${member}, você subiu para o nível **${newLevel}**! ${mensagens[Math.floor(Math.random() * mensagens.length)]}`);
+                    if (channel) channel.send(`${member.displayName}, você subiu para o nível **${newLevel}**! ${mensagens[Math.floor(Math.random() * mensagens.length)]}`);
                  } else {
                     db.set(`xp_${guild.id}_${member.id}`, newXP);
                  }
