@@ -42,7 +42,6 @@ async function configurePlayer() {
         console.warn('[CONFIGURAÇÃO] Cookie do YouTube não encontrado. O bot pode ser bloqueado.');
     }
 }
-configurePlayer();
 
 const mensagens = [
     "Tu ta ficando fortin, ein 💪",
@@ -225,3 +224,4 @@ async function updateNicknameBadge(member, newLevel) {
 }
 
 client.login(token);
+configurePlayer();
