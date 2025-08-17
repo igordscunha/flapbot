@@ -2,6 +2,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Collection, GatewayIntentBits, Events, Partials } = require('discord.js');
 const { QuickDB } = require('quick.db');
+const play = require('play-dl');
 const db = new QuickDB();
 require('dotenv').config();
 
