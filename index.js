@@ -8,26 +8,26 @@ require('dotenv').config();
 
 // *************** // **************** //
 
-async function configurePlayer() {
-    if (play.sp_validate && play.is_expired()) {
-        try {
-            await play.refreshToken();
-            console.log('[CONFIGURAÇÃO] Token do play-dl atualizado.');
-        } catch (e) { 
-            console.error('[CONFIGURAÇÃO] Falha ao atualizar token do play-dl.');
-        }
-    }
-    if (process.env.YOUTUBE_COOKIE) {
-        try {
-            await play.setToken({ youtube: { cookie: process.env.YOUTUBE_COOKIE } });
-            console.log('[CONFIGURAÇÃO] Cookie do YouTube configurado com sucesso.');
-        } catch (e) { 
-            console.error('[CONFIGURAÇÃO] Falha ao configurar cookie do YouTube.');
-        }
-    } else {
-        console.warn('[CONFIGURAÇÃO] Cookie do YouTube não encontrado. O bot pode ser bloqueado.');
-    }
-}
+// async function configurePlayer() {
+//     if (play.sp_validate && play.is_expired()) {
+//         try {
+//             await play.refreshToken();
+//             console.log('[CONFIGURAÇÃO] Token do play-dl atualizado.');
+//         } catch (e) { 
+//             console.error('[CONFIGURAÇÃO] Falha ao atualizar token do play-dl.');
+//         }
+//     }
+//     if (process.env.YOUTUBE_COOKIE) {
+//         try {
+//             await play.setToken({ youtube: { cookie: process.env.YOUTUBE_COOKIE } });
+//             console.log('[CONFIGURAÇÃO] Cookie do YouTube configurado com sucesso.');
+//         } catch (e) { 
+//             console.error('[CONFIGURAÇÃO] Falha ao configurar cookie do YouTube.');
+//         }
+//     } else {
+//         console.warn('[CONFIGURAÇÃO] Cookie do YouTube não encontrado. O bot pode ser bloqueado.');
+//     }
+// }
 
 const mensagens = [
     "Tu ta ficando fortin, ein 💪",
@@ -119,7 +119,7 @@ for (const file of eventFiles) {
 
 client.once(Events.ClientReady, c => {
 	console.log(`Tudo pronto! Logado como ${c.user.tag}`);
-    configurePlayer();
+    //configurePlayer();
 	setInterval(updateVoiceXP, 60000);
 });
 
