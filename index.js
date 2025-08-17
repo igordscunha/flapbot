@@ -97,20 +97,20 @@ client.on(Events.MessageCreate, async message => {
     if (cooldowns.has(message.author.id)) return;
 
     const xpToGive = Math.floor(Math.random() * (25 - 15 + 1)) + 15; // XP entre 15 e 25
-    const currentXP = db.get(`xp_${message.guild.id}_${message.author.id}`) || 0;
-    const currentLevel = db.get(`level_${message.guild.id}_${message.author.id}`) || 1;
+    const currentXP = (await db.get(`xp_${message.guild.id}_${message.author.id}`)) || 0;
+    const currentLevel = (await db.get(`level_${message.guild.id}_${message.author.id}`)) || 1;
     
     const newXP = currentXP + xpToGive;
     const nextLevelXP = 5 * (currentLevel ** 2) + 50 * currentLevel + 100;
 
     if (newXP >= nextLevelXP) {
         const newLevel = currentLevel + 1;
-        db.set(`level_${message.guild.id}_${message.author.id}`, newLevel);
-        db.set(`xp_${message.guild.id}_${message.author.id}`, 0); // Reseta o XP para o novo nível
+        await db.set(`level_${message.guild.id}_${message.author.id}`, newLevel);
+        await db.set(`xp_${message.guild.id}_${message.author.id}`, 0); // Reseta o XP para o novo nível
         message.channel.send(`${message.author}, você subiu para o nível **${newLevel}**! ${mensagens[Math.floor(Math.random() * mensagens.length)]}`);
         // Lógica para dar cargos pra ser adicionada futuramente
     } else {
-        db.set(`xp_${message.guild.id}_${message.author.id}`, newXP);
+        await db.set(`xp_${message.guild.id}_${message.author.id}`, newXP);
     }
     
     // Adiciona cooldown de 60 segundos
@@ -137,13 +137,13 @@ async function updateVoiceXP() {
 
                  if (newXP >= nextLevelXP) {
                     const newLevel = currentLevel + 1;
-                    db.set(`level_${guild.id}_${member.id}`, newLevel);
-                    db.set(`xp_${guild.id}_${member.id}`, 0);
+                    await db.set(`level_${guild.id}_${member.id}`, newLevel);
+                    await db.set(`xp_${guild.id}_${member.id}`, 0);
                     // Encontrar um canal de texto para anunciar
                     const channel = guild.channels.cache.find(ch => ch.name === 'geral' || ch.type === 0);
-                    if (channel) channel.send(`${member.displayName}, você subiu para o nível **${newLevel}**! ${mensagens[Math.floor(Math.random() * mensagens.length)]}`);
+                    if (channel) channel.send(`${member.displayName} subiu para o nível **${newLevel}**! ${mensagens[Math.floor(Math.random() * mensagens.length)]}`);
                  } else {
-                    db.set(`xp_${guild.id}_${member.id}`, newXP);
+                    await db.set(`xp_${guild.id}_${member.id}`, newXP);
                  }
             }
         });
