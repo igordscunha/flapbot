@@ -21,6 +21,28 @@ const client = new Client({
 	partials: [Partials.Channel]
 });
 
+async function configurePlayer() {
+    if (play.is_expired()) {
+        try {
+            await play.refreshToken();
+            console.log('[CONFIGURAÇÃO] Token do play-dl atualizado.');
+        } catch (e) { 
+            console.error('[CONFIGURAÇÃO] Falha ao atualizar token do play-dl.');
+        }
+    }
+    if (process.env.YOUTUBE_COOKIE) {
+        try {
+            await play.setToken({ youtube: { cookie: process.env.YOUTUBE_COOKIE } });
+            console.log('[CONFIGURAÇÃO] Cookie do YouTube configurado com sucesso.');
+        } catch (e) { 
+            console.error('[CONFIGURAÇÃO] Falha ao configurar cookie do YouTube.');
+        }
+    } else {
+        console.warn('[CONFIGURAÇÃO] Cookie do YouTube não encontrado. O bot pode ser bloqueado.');
+    }
+}
+configurePlayer();
+
 const mensagens = [
     "Tu ta ficando fortin, ein 💪",
     "Vagabundo tá entendendo nada 👀",
