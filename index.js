@@ -119,6 +119,7 @@ for (const file of eventFiles) {
 
 client.once(Events.ClientReady, c => {
 	console.log(`Tudo pronto! Logado como ${c.user.tag}`);
+    configurePlayer();
 	setInterval(updateVoiceXP, 60000);
 })
 
@@ -224,4 +225,3 @@ async function updateNicknameBadge(member, newLevel) {
 }
 
 client.login(token);
-configurePlayer();
