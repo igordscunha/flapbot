@@ -42,8 +42,19 @@ const mensagens = [
     "Vai que vai companheiro!",
     "Você é muito brabo! 👏",
     "Quero ser igual você quando crescer! 🤩",
-    "Te amo, ta? ❤️"
+    "Te amo, ta? ❤️",
+    "Koe cara não tô acreditando nisso...",
+    "Dono da porra toda 💵",
+    "Com certeza o melhor da tua rua!"
 ];
+
+const levelBadges = {
+    5: '🥉',
+    10: '🥈',
+    20: '🥇',
+    35: '💎',
+    50: '👑'
+};
 
 const token = process.env.DISCORD_TOKEN;
 
@@ -108,7 +119,8 @@ client.on(Events.MessageCreate, async message => {
         await db.set(`level_${message.guild.id}_${message.author.id}`, newLevel);
         await db.set(`xp_${message.guild.id}_${message.author.id}`, 0); // Reseta o XP para o novo nível
         message.channel.send(`${message.author}, você subiu para o nível **${newLevel}**! ${mensagens[Math.floor(Math.random() * mensagens.length)]}`);
-        // Lógica para dar cargos pra ser adicionada futuramente
+        
+        await updateNicknameBadge(message.member, newLevel)
     } else {
         await db.set(`xp_${message.guild.id}_${message.author.id}`, newXP);
     }
@@ -139,15 +151,54 @@ async function updateVoiceXP() {
                     const newLevel = currentLevel + 1;
                     await db.set(`level_${guild.id}_${member.id}`, newLevel);
                     await db.set(`xp_${guild.id}_${member.id}`, 0);
+                    
                     // Encontrar um canal de texto para anunciar
                     const channel = guild.channels.cache.find(ch => ch.name === 'geral' || ch.type === 0);
                     if (channel) channel.send(`${member.displayName} subiu para o nível **${newLevel}**! ${mensagens[Math.floor(Math.random() * mensagens.length)]}`);
-                 } else {
+                
+                    await updateNicknameBadge(member, newLevel)
+                } else {
                     await db.set(`xp_${guild.id}_${member.id}`, newXP);
                  }
             }
         });
     });
+}
+
+
+// FUNÇÃO PARA ATUALIZAR O NICK COM A INSÍGNIA
+
+async function updateNicknameBadge(member, newLevel) {
+    let newBadge = null;
+    for (const level of Object.keys(levelBadges).sort((a, b) => b - a)) {
+        if (newLevel >= level) {
+            newBadge = levelBadges[level];
+            break;
+        }
+    }
+
+    if (!newBadge) return;
+
+    try {
+        let currentName = member.nickname || member.user.username;
+
+        Object.values(levelBadges).forEach(badge => {
+            currentName = currentName.replace(badge, '').trim();
+        });
+
+        const newNickname = `${currentName} ${newBadge}`;
+        
+        if (newNickname.length > 32) {
+            console.log(`Não foi possível atualizar o apelido de ${member.user.username} por exceder 32 caracteres.`);
+            return;
+        }
+
+        await member.setNickname(newNickname);
+        console.log(`Apelido de ${member.user.username} atualizado para: ${newNickname}`);
+
+    } catch (error) {
+        console.error(`Falha ao atualizar o apelido de ${member.user.username}:`, error.message);
+    }
 }
 
 client.login(token);
