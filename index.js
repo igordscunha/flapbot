@@ -8,22 +8,8 @@ require('dotenv').config();
 
 // *************** // **************** //
 
-const client = new Client({ 
-	intents: [
-		GatewayIntentBits.Guilds,
-		GatewayIntentBits.GuildVoiceStates,
-		GatewayIntentBits.GuildMessages,
-		GatewayIntentBits.GuildMessagePolls,
-		GatewayIntentBits.GuildMessageReactions,
-		GatewayIntentBits.GuildMembers,
-		GatewayIntentBits.MessageContent,
-		GatewayIntentBits.GuildPresences
-	], 
-	partials: [Partials.Channel]
-});
-
 async function configurePlayer() {
-    if (play.is_expired()) {
+    if (play.sp_validate && play.is_expired()) {
         try {
             await play.refreshToken();
             console.log('[CONFIGURAÇÃO] Token do play-dl atualizado.');
@@ -78,6 +64,20 @@ const levelBadges = {
     50: '👑'
 };
 
+const client = new Client({ 
+	intents: [
+		GatewayIntentBits.Guilds,
+		GatewayIntentBits.GuildVoiceStates,
+		GatewayIntentBits.GuildMessages,
+		GatewayIntentBits.GuildMessagePolls,
+		GatewayIntentBits.GuildMessageReactions,
+		GatewayIntentBits.GuildMembers,
+		GatewayIntentBits.MessageContent,
+		GatewayIntentBits.GuildPresences
+	], 
+	partials: [Partials.Channel]
+});
+
 const token = process.env.DISCORD_TOKEN;
 
 client.commands = new Collection();
@@ -121,7 +121,7 @@ client.once(Events.ClientReady, c => {
 	console.log(`Tudo pronto! Logado como ${c.user.tag}`);
     configurePlayer();
 	setInterval(updateVoiceXP, 60000);
-})
+});
 
 // SISTEMA DE XP POR MENSAGEM
 client.on(Events.MessageCreate, async message => {
