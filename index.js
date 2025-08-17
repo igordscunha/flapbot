@@ -186,7 +186,7 @@ async function updateNicknameBadge(member, newLevel) {
             currentName = currentName.replace(badge, '').trim();
         });
 
-        const newNickname = `${currentName} ${newBadge}`;
+        const newNickname = `${newBadge} | ${currentName}`;
         
         if (newNickname.length > 32) {
             console.log(`Não foi possível atualizar o apelido de ${member.user.username} por exceder 32 caracteres.`);
