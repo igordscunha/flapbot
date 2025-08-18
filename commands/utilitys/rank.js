@@ -55,7 +55,7 @@ module.exports = {
                 .setTitle('Quadro de medalhas 🥇')
                 .setDescription(medals);
 
-            await interaction.editReply({ embeds: [embed] });
+            await interaction.editReply({ embeds: [embed], flags: MessageFlags.Ephemeral });
         }
         
         if(sub === 'top'){
@@ -100,7 +100,7 @@ module.exports = {
                     const member = await interaction.guild.members.fetch(userEntry.id).catch(() => null);
                     const name = member ? member.displayName : `Usuário Desconhecido (${userEntry.id})`;
 
-                    description += `**${name}** | Level ${userEntry.level} - (${userEntry.xp}) XP\n`;
+                    description += `**${name}** | Level ${userEntry.level}\n`;
                 }
 
                 const embed = new EmbedBuilder()
