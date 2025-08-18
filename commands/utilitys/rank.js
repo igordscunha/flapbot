@@ -24,7 +24,7 @@ module.exports = {
         
     async execute(interaction) {
         await interaction.deferReply();
-        const sub = interaction.options.getSubCommand();
+        const sub = interaction.options.getSubcommand();
 
         // RANK USUARIO
         if(sub === 'usuario'){
