@@ -12,8 +12,8 @@ module.exports = {
                 .setDescription('O usuário que você quer ver o rank.')
                 .addUserOption(opt =>
                     opt
-                        .setName('target')
-                        .setDescription('Selecione o usuário')
+                        .setName('nome')
+                        .setDescription('Selecione o vulgo do usuário')
                         .setRequired(true)
                     )
         )
@@ -29,12 +29,12 @@ module.exports = {
         ),
         
     async execute(interaction) {
-        await interaction.deferReply();
+        await interaction.deferReply({ ephemeral: true });
         const sub = interaction.options.getSubcommand();
 
         // RANK USUARIO
         if(sub === 'usuario'){
-            const user = interaction.options.getUser('target') || interaction.user;
+            const user = interaction.options.getUser('nome') || interaction.user;
             
             const level = (await db.get(`level_${interaction.guild.id}_${user.id}`)) || 1;
             const xp = (await db.get(`xp_${interaction.guild.id}_${user.id}`)) || 0;
@@ -49,7 +49,9 @@ module.exports = {
                 )
                 .setTimestamp();
                 
-            await interaction.editReply({ embeds: [embed], flags: MessageFlags.Ephemeral });
+            await interaction.followUp({ 
+                embeds: [embed]
+            });
         }
 
 
@@ -61,7 +63,7 @@ module.exports = {
                 .setTitle('Quadro de medalhas 🥇')
                 .setDescription(medals);
 
-            await interaction.editReply({ embeds: [embed], flags: MessageFlags.Ephemeral });
+            await interaction.editReply({ embeds: [embed] });
         }
         
         if(sub === 'top'){
