@@ -6,18 +6,24 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('rank')
         .setDescription('Mostra seu nível e XP no servidor.')
-        .addStringOption(option =>
-            option
+        .addSubcommand(sub =>
+            sub
                 .setName('usuario')
                 .setDescription('O usuário que você quer ver o rank.')
+                .addUserOption(opt =>
+                    opt
+                        .setName('target')
+                        .setDescription('Selecione o usuário')
+                        .setRequired(true)
+                    )
         )
-        .addSubcommand(option =>
-            option
+        .addSubcommand(sub =>
+            sub
                 .setName('medalhas')
                 .setDescription('Mostra o quadro de medalhas')
         )
-        .addSubcommand(option =>
-            option
+        .addSubcommand(sub =>
+            sub
                 .setName('top')
                 .setDescription('Mostra o top 5 do ranking')
         ),
@@ -27,22 +33,24 @@ module.exports = {
         const sub = interaction.options.getSubcommand();
 
         // RANK USUARIO
-        const user = interaction.options.getUser('usuario') || interaction.user;
-        
-        const level = (await db.get(`level_${interaction.guild.id}_${user.id}`)) || 1;
-        const xp = (await db.get(`xp_${interaction.guild.id}_${user.id}`)) || 0;
-        const nextLevelXP = 5 * (level ** 2) + 50 * level + 100;
-
-        const embed = new EmbedBuilder()
-            .setColor('#facc15')
-            .setAuthor({ name: `Rank de ${user.displayName}`, iconURL: user.displayAvatarURL() })
-            .addFields(
-                { name: 'Level', value: `**${level}**`, inline: true },
-                { name: 'XP', value: `**${xp} / ${nextLevelXP}**`, inline: true }
-            )
-            .setTimestamp();
+        if(sub === 'usuario'){
+            const user = interaction.options.getUser('target') || interaction.user;
             
-        await interaction.editReply({ embeds: [embed], flags: MessageFlags.Ephemeral });
+            const level = (await db.get(`level_${interaction.guild.id}_${user.id}`)) || 1;
+            const xp = (await db.get(`xp_${interaction.guild.id}_${user.id}`)) || 0;
+            const nextLevelXP = 5 * (level ** 2) + 50 * level + 100;
+    
+            const embed = new EmbedBuilder()
+                .setColor('#facc15')
+                .setAuthor({ name: `Rank de ${user.displayName}`, iconURL: user.displayAvatarURL() })
+                .addFields(
+                    { name: 'Level', value: `**${level}**`, inline: true },
+                    { name: 'XP', value: `**${xp} / ${nextLevelXP}**`, inline: true }
+                )
+                .setTimestamp();
+                
+            await interaction.editReply({ embeds: [embed], flags: MessageFlags.Ephemeral });
+        }
 
 
         if(sub === 'medalhas'){
