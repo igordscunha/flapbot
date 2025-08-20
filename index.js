@@ -206,7 +206,7 @@ async function updateNicknameBadge(member, newLevel) {
         let currentName = member.nickname || member.user.username;
 
         Object.values(levelBadges).forEach(badge => {
-            currentName = currentName.replace(badge, '').trim().slice(0, currentName.length);
+            currentName = currentName.replace(badge, '').trim().slice(1);
         });
 
         const newNickname = `${newBadge} | ${currentName}`;
