@@ -5,21 +5,27 @@ const rl = require('readline').createInterface({
   output: process.stdout
 });
 
-async function DarLevel(guildId, memberId){
+async function darLevel(guildId, memberId){
 
   try{
-    const levelAtual = await db.get(`level_${guildId}_${memberId}`)
-    await db.set(`level_${guildId}_${memberId}`, levelAtual + 1)
-    console.log(`Você acabou de dar um level para: ${memberId}`)
+    const levelAtual = (await db.get(`level_${guildId}_${memberId}`)) || 1;
+    const novoLevel = levelAtual + 1;
+
+    await db.set(`level_${guildId}_${memberId}`, novoLevel)
+    console.log(`Sucessagem! Agora o usuário está no nível: ${novoLevel}`)
   }
   catch (error){
     console.error("Alguma coisa deu errado: ", error)
   }
 }
 
-rl.question('Qual id da guild que você quer upar o usuário: ', guildId => {
-  rl.question('Qual o id do usuário: ', memberId => {
-    console.log(DarLevel(guildId, memberId));
-    rl.close();
+async function main(){
+  rl.question('Qual id da guild que você quer upar o usuário: ', guildId => {
+    rl.question('Qual o id do usuário: ', async (memberId) => {
+      await darLevel(guildId, memberId);
+      rl.close();
+    });
   });
-});
+}
+
+main();
