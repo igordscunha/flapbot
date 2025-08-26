@@ -176,7 +176,7 @@ async function updateVoiceXP() {
                     await db.set(`xp_${guild.id}_${member.id}`, 0);
                     
                     // Encontrar um canal de texto para anunciar
-                    const channel = guild.channels.cache.find(ch => ch.name === 'geral' || ch.type === 0);
+                    const channel = guild.channels.cache.find(ch => ch.name === 'geral' || ch.name === 'varandinha' || ch.type === 0);
                     if (channel) channel.send(`${member.displayName} subiu para o nível **${newLevel}**! ${mensagens[Math.floor(Math.random() * mensagens.length)]}`);
                 
                     await updateNicknameBadge(member, newLevel)
@@ -207,6 +207,7 @@ async function updateNicknameBadge(member, newLevel) {
 
         Object.values(levelBadges).forEach(badge => {
             currentName = currentName.replace(badge, '').replaceAll('|', ' ').trim(); // temporário até tirar todos os | dos nicks bugados
+            // currentName  = currentName.replaceAll(currentName, ' ').trim(); // ideia para trocar badge pelo level numero
         });
 
         const newNickname = `${newBadge} ${currentName}`;
