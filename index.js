@@ -29,41 +29,6 @@ require('dotenv').config();
 //     }
 // }
 
-const mensagens = [
-    "Tu ta ficando fortin, ein 💪",
-    "Vagabundo tá entendendo nada 👀",
-    "Tá ficando brabin de te pegar...",
-    "Hora de jogar o jet na água e dar esse role",
-    "Quer namorar comigo? 🥹",
-    "Você tá ficando até mais bonito... 👀",
-    "O capitalismo precisa ruir...",
-    "Hoje o gelo é por sua conta!",
-    "Cruuuuuuuuuzes",
-    "Gostozin no azeite aiiii 🥵",
-    "Glub glub... 💦💦",
-    "Aaaaaaaii que delíciaaaa",
-    "Si señor 🫡",
-    "Que cintura ignorante 😳",
-    "Coisa linda de se ver!",
-    "Me paga um balde hoje?",
-    "Tadalaboy! 😈",
-    "Vai que vai companheiro!",
-    "Você é muito brabo! 👏",
-    "Quero ser igual você quando crescer! 🤩",
-    "Te amo, ta? ❤️",
-    "Koe cara não tô acreditando nisso...",
-    "Dono da porra toda 💵",
-    "Com certeza o melhor da tua rua!"
-];
-
-const levelBadges = {
-    5: '🥉',
-    10: '🥈',
-    20: '🥇',
-    35: '💎',
-    50: '👑'
-};
-
 const client = new Client({ 
 	intents: [
 		GatewayIntentBits.Guilds,
@@ -122,6 +87,33 @@ client.once(Events.ClientReady, c => {
     //configurePlayer();
 	setInterval(updateVoiceXP, 60000);
 });
+
+const mensagens = [
+    "Tu ta ficando fortin, ein 💪",
+    "Vagabundo tá entendendo nada 👀",
+    "Tá ficando brabin de te pegar...",
+    "Hora de jogar o jet na água e dar esse role",
+    "Quer namorar comigo? 🥹",
+    "Você tá ficando até mais bonito... 👀",
+    "O capitalismo precisa ruir...",
+    "Hoje o gelo é por sua conta!",
+    "Cruuuuuuuuuzes",
+    "Gostozin no azeite aiiii 🥵",
+    "Glub glub... 💦💦",
+    "Aaaaaaaii que delíciaaaa",
+    "Si señor 🫡",
+    "Que cintura ignorante 😳",
+    "Coisa linda de se ver!",
+    "Me paga um balde hoje?",
+    "Tadalaboy! 😈",
+    "Vai que vai companheiro!",
+    "Você é muito brabo! 👏",
+    "Quero ser igual você quando crescer! 🤩",
+    "Te amo, ta? ❤️",
+    "Koe cara não tô acreditando nisso...",
+    "Dono da porra toda 💵",
+    "Com certeza o melhor da tua rua!"
+];
 
 // SISTEMA DE XP POR MENSAGEM
 client.on(Events.MessageCreate, async message => {
@@ -188,6 +180,13 @@ async function updateVoiceXP() {
     });
 }
 
+const levelBadges = {
+    5: '🥉',
+    10: '🥈',
+    20: '🥇',
+    35: '💎',
+    50: '👑'
+};
 
 // FUNÇÃO PARA ATUALIZAR O NICK COM A INSÍGNIA
 
@@ -203,7 +202,7 @@ async function updateNicknameBadge(member, newLevel) {
     if (!newBadge) return;
 
     try {
-        let currentName = member.nickname || member.user.username;
+        let currentName = member.nickname || member.user.globalName || member.user.username;
 
         Object.values(levelBadges).forEach(badge => {
             currentName = currentName.replace(badge, '').replaceAll('|', ' ').trim(); // temporário até tirar todos os | dos nicks bugados
