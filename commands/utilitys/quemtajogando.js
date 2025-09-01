@@ -18,7 +18,7 @@ module.exports = {
         });
 
         if (playingMembers.size === 0) {
-            return interaction.reply(`Ninguém está jogando "${interaction.options.getString('jogo')}" no momento.`);
+            return interaction.reply({ content: `Ninguém está jogando "${interaction.options.getString('jogo')}" no momento.`, ephemeral: true });
         }
 
         const embed = new EmbedBuilder()
@@ -27,6 +27,6 @@ module.exports = {
             .setDescription(playingMembers.map(m => `- ${m.displayName}`).join('\n'))
             .setTimestamp();
         
-        await interaction.reply({ embeds: [embed] });
+        await interaction.reply({ embeds: [embed], ephemeral: true });
     },
 };
