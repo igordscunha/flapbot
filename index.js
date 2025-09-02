@@ -181,9 +181,9 @@ async function updateVoiceXP() {
 }
 
 const levelBadges = {
-    5: '🥉',
-    10: '🥈',
-    20: '🥇',
+    1: '🥉',
+    15: '🥈',
+    25: '🥇',
     35: '💎',
     50: '👑'
 };
@@ -205,8 +205,7 @@ async function updateNicknameBadge(member, newLevel) {
         let currentName = member.nickname || member.user.globalName || member.user.username;
 
         Object.values(levelBadges).forEach(badge => {
-            currentName = currentName.replace(badge, '').replaceAll('|', ' ').trim(); // temporário até tirar todos os | dos nicks bugados
-            // currentName  = currentName.replaceAll(currentName, ' ').trim(); // ideia para trocar badge pelo level numero
+            currentName = currentName.replace(badge, '').trim();
         });
 
         const newNickname = `${newBadge} ${currentName}`;
