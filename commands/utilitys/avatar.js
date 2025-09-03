@@ -1,6 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 
 module.exports = {
+    cooldown: 3,
     data: new SlashCommandBuilder()
         .setName('avatar')
         .setDescription('Mostra o avatar de um usuário em alta resolução.')

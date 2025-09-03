@@ -9,6 +9,7 @@ const play = require('play-dl');
 
 
 module.exports = {
+    cooldown: 5,
     data: new SlashCommandBuilder()
         .setName('musica')
         .setDescription('Comandos relacionados a música.')

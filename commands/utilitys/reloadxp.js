@@ -3,6 +3,7 @@ const { QuickDB } = require('quick.db');
 const db = new QuickDB();
 
 module.exports = {
+    cooldown: 10,
     data: new SlashCommandBuilder()
         .setName('reloadxp')
         .setDescription('Corrige o XP de usuários que foi corrompido por um bug antigo.')

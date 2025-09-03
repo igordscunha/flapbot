@@ -2,6 +2,7 @@ const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const axios = require('axios');
 
 module.exports = {
+    cooldown: 5,
     data: new SlashCommandBuilder()
         .setName('game')
         .setDescription('Busca informações sobre um jogo na Steam.')

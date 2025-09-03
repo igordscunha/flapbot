@@ -3,6 +3,7 @@ const { QuickDB } = require('quick.db');
 const db = new QuickDB();
 
 module.exports = {
+    cooldown: 3,
     data: new SlashCommandBuilder()
         .setName('rank')
         .setDescription('Mostra seu nível e XP no servidor.')

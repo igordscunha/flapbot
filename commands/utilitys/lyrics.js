@@ -4,6 +4,7 @@ const Genius = require('genius-lyrics');
 const Client = new Genius.Client(process.env.GENIUS_API_CLIENT_ACCESS_TOKEN);
 
 module.exports = {
+	cooldown: 5,
 	data: new SlashCommandBuilder()
 		.setName('letra')
 		.setDescription('Busca a letra de uma música.')

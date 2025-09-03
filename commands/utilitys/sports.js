@@ -23,6 +23,7 @@ const leagueNames = {
 const apiKey = process.env.SPORTS_API_KEY;
 
 module.exports = {
+  cooldown: 5,
 	data: new SlashCommandBuilder()
 		.setName('esportes')
 		.setDescription('Mostra os últimos resultados de uma liga esportiva.')

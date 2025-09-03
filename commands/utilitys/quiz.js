@@ -3,6 +3,7 @@ const axios = require('axios');
 const he = require('he'); // Para decodificar caracteres HTML
 
 module.exports = {
+    cooldown: 5,
     data: new SlashCommandBuilder()
         .setName('quiz')
         .setDescription('Inicia um jogo de trivia sobre conhecimentos gerais.'),
