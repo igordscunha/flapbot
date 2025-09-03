@@ -56,7 +56,7 @@ module.exports = {
 
 
         if(sub === 'medalhas'){
-            const medals = "Level 5+: 🥉\nLevel 10+: 🥈\nLevel 20+: 🥇\nLevel 35+: 💎\nLevel 50+: 👑";
+            const medals = "Level 1+: 🥉\nLevel 15+: 🥈\nLevel 25+: 🥇\nLevel 35+: 💎\nLevel 50+: 👑";
 
             const embed = new EmbedBuilder()
                 .setColor('#facc15')
