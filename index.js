@@ -4,6 +4,7 @@ const { Client, Collection, GatewayIntentBits, Events, Partials } = require('dis
 const { QuickDB } = require('quick.db');
 const play = require('play-dl');
 const db = new QuickDB();
+const data = require('./data.json')
 require('dotenv').config();
 
 // *************** // **************** //
@@ -88,33 +89,6 @@ client.once(Events.ClientReady, c => {
 	setInterval(updateVoiceXP, 60000);
 });
 
-const mensagens = [
-    "Tu ta ficando fortin, ein 💪",
-    "Vagabundo tá entendendo nada 👀",
-    "Tá ficando brabin de te pegar...",
-    "Hora de jogar o jet na água e dar esse role",
-    "Quer namorar comigo? 🥹",
-    "Você tá ficando até mais bonito... 👀",
-    "O capitalismo precisa ruir...",
-    "Hoje o gelo é por sua conta!",
-    "Cruuuuuuuuuzes",
-    "Gostozin no azeite aiiii 🥵",
-    "Glub glub... 💦💦",
-    "Aaaaaaaii que delíciaaaa",
-    "Si señor 🫡",
-    "Que cintura ignorante 😳",
-    "Coisa linda de se ver!",
-    "Me paga um balde hoje?",
-    "Tadalaboy! 😈",
-    "Vai que vai companheiro!",
-    "Você é muito brabo! 👏",
-    "Quero ser igual você quando crescer! 🤩",
-    "Te amo, ta? ❤️",
-    "Koe cara não tô acreditando nisso...",
-    "Dono da porra toda 💵",
-    "Com certeza o melhor da tua rua!"
-];
-
 // SISTEMA DE XP POR MENSAGEM
 client.on(Events.MessageCreate, async message => {
     if (message.author.bot || !message.guild) return;
@@ -133,7 +107,7 @@ client.on(Events.MessageCreate, async message => {
         const newLevel = currentLevel + 1;
         await db.set(`level_${message.guild.id}_${message.author.id}`, newLevel);
         await db.set(`xp_${message.guild.id}_${message.author.id}`, 0); // Reseta o XP para o novo nível
-        message.channel.send(`${message.author}, você subiu para o nível **${newLevel}**! ${mensagens[Math.floor(Math.random() * mensagens.length)]}`);
+        message.channel.send(`${message.author}, você subiu para o nível **${newLevel}**! ${data.mensagens[Math.floor(Math.random() * data.mensagens.length)]}`);
         
         await updateNicknameBadge(message.member, newLevel)
     } else {
@@ -169,7 +143,7 @@ async function updateVoiceXP() {
                     
                     // Encontrar um canal de texto para anunciar
                     const channel = guild.channels.cache.find(ch => ch.name === 'geral' || ch.name === 'varandinha' || ch.type === 0);
-                    if (channel) channel.send(`${member.displayName} subiu para o nível **${newLevel}**! ${mensagens[Math.floor(Math.random() * mensagens.length)]}`);
+                    if (channel) channel.send(`${member.displayName} subiu para o nível **${newLevel}**! ${data.mensagens[Math.floor(Math.random() * data.mensagens.length)]}`);
                 
                     await updateNicknameBadge(member, newLevel)
                 } else {
@@ -180,21 +154,13 @@ async function updateVoiceXP() {
     });
 }
 
-const levelBadges = {
-    1: '🥉',
-    15: '🥈',
-    25: '🥇',
-    35: '💎',
-    50: '👑'
-};
-
 // FUNÇÃO PARA ATUALIZAR O NICK COM A INSÍGNIA
 
 async function updateNicknameBadge(member, newLevel) {
     let newBadge = null;
-    for (const level of Object.keys(levelBadges).sort((a, b) => b - a)) {
+    for (const level of Object.keys(data.levelBadges).sort((a, b) => b - a)) {
         if (newLevel >= level) {
-            newBadge = levelBadges[level];
+            newBadge = data.levelBadges[level];
             break;
         }
     }
@@ -204,7 +170,7 @@ async function updateNicknameBadge(member, newLevel) {
     try {
         let currentName = member.nickname || member.user.globalName || member.user.username;
 
-        Object.values(levelBadges).forEach(badge => {
+        Object.values(data.levelBadges).forEach(badge => {
             currentName = currentName.replace(badge, '').trim();
         });
 
