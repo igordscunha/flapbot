@@ -24,7 +24,7 @@ jobs:
     - name: Rodar comando de deploy
       run: |
         ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
-          cd /opt/botbpi
+          cd /opt/flapbot
           git pull origin main
           sudo systemctl restart discord-bot.service
         EOF
