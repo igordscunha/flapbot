@@ -7,7 +7,7 @@ module.exports = {
     .setDescription('Site do FlapBot'),
 
   async execute(interaction){
-    await interaction.deferReply();
+    await interaction.deferReply({ ephemeral: true });
     await interaction.editReply('https://flapbot.vercel.app/');
   }
 }
