@@ -142,8 +142,30 @@ async function updateVoiceXP() {
                     await db.set(`xp_${guild.id}_${member.id}`, 0);
                     
                     // Encontrar um canal de texto para anunciar
-                    const channel = guild.channels.cache.find(ch => ch.name === 'geral' || ch.name === 'varandinha' || ch.type === 0);
-                    if (channel) channel.send(`${member.displayName} subiu para o nível **${newLevel}**! ${data.mensagens[Math.floor(Math.random() * data.mensagens.length)]}`);
+                    const channelId = (await db.get(`canal_texto_${guild.id}`));
+                    let targetChannel;
+
+                    if(channelId) {
+                        targetChannel = guild.channels.cache.get(channelId);
+                    }
+
+                    //primeiro fallback
+                    if(!targetChannel){
+                        targetChannel = guild.channels.cache.find(ch => ch.type === ChannelType.GuildText && ch.name.toLowerCase() === 'geral' || ch.name.toLocaleLowerCase() === 'welcome');
+                    }
+
+                    //segundo fallback
+                    if(!targetChannel){
+                        targetChannel = guild.channels.cache.find(ch => ch.type === ChannelType.GuildText || 0);
+                    }
+
+                    //tratamento erro
+                    if(!targetChannel){
+                        console.error(`Nenhum canal de texto encontrado em ${guild.id}`);
+                        return;
+                    }
+  
+                    await targetChannel.send(`${member.displayName} subiu para o nível **${newLevel}**! ${data.mensagens[Math.floor(Math.random() * data.mensagens.length)]}`);
                 
                     await updateNicknameBadge(member, newLevel)
                 } else {
