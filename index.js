@@ -165,7 +165,11 @@ async function updateVoiceXP() {
                         return;
                     }
   
-                    await targetChannel.send(`${member.displayName} subiu para o nível **${newLevel}**! ${data.mensagens[Math.floor(Math.random() * data.mensagens.length)]}`);
+                    const envioMensagem = await db.get('envio_mensagem') || 0;
+
+                    if(envioMensagem == 1){
+                        await targetChannel.send(`${member.displayName} subiu para o nível **${newLevel}**! ${data.mensagens[Math.floor(Math.random() * data.mensagens.length)]}`);
+                    }
                 
                     await updateNicknameBadge(member, newLevel)
                 } else {
