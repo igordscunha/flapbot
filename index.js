@@ -107,7 +107,7 @@ client.on(Events.MessageCreate, async message => {
         const newLevel = currentLevel + 1;
         await db.set(`level_${message.guild.id}_${message.author.id}`, newLevel);
         await db.set(`xp_${message.guild.id}_${message.author.id}`, 0); // Reseta o XP para o novo nível
-        message.channel.send(`${message.author}, você subiu para o nível **${newLevel}**! ${data.mensagens[Math.floor(Math.random() * data.mensagens.length)]}`);
+        message.channel.send(`${member.displayName} advanced from Level **${newLevel - 1}** to Level **${newLevel}**!`);
         
         await updateNicknameBadge(message.member, newLevel)
     } else {
@@ -168,7 +168,7 @@ async function updateVoiceXP() {
                     const envioMensagem = await db.get('envio_mensagem') || 0;
 
                     if(envioMensagem == 1){
-                        await targetChannel.send(`${member.displayName} subiu para o nível **${newLevel}**! ${data.mensagens[Math.floor(Math.random() * data.mensagens.length)]}`);
+                        await targetChannel.send(`${member.displayName} advanced from Level **${newLevel - 1}** to Level **${newLevel}**!`);
                     }
                 
                     await updateNicknameBadge(member, newLevel)
