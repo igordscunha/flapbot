@@ -97,7 +97,7 @@ client.on(Events.MessageCreate, async message => {
     if (cooldowns.has(message.author.id)) return;
 
     const xpToGive = Math.floor(Math.random() * (25 - 15 + 1)) + 15; // XP entre 15 e 25
-    const currentXP = (await db.get(`xp_${message.guild.id}_${message.author.id}`)) || 0;
+    const currentXP = (await db.get(`xp_${message.guild.id}_${message.author.id}`)) || 150;
     const currentLevel = (await db.get(`level_${message.guild.id}_${message.author.id}`)) || 1;
     
     const newXP = currentXP + xpToGive;
