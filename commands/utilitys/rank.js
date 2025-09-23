@@ -20,8 +20,8 @@ module.exports = {
         )
         .addSubcommand(sub =>
             sub
-                .setName('medalhas')
-                .setDescription('Mostra o quadro de medalhas')
+                .setName('insigneas')
+                .setDescription('Mostra o quadro de insigneas')
         )
         .addSubcommand(sub =>
             sub
@@ -56,12 +56,12 @@ module.exports = {
         }
 
 
-        if(sub === 'medalhas'){
-            const medals = "Level 1+: 🥉\nLevel 15+: 🥈\nLevel 25+: 🥇\nLevel 35+: 💎\nLevel 50+: 👑";
+        if(sub === 'insigneas'){
+            const medals = "Level 1+: 🐣\nLevel 5+: 🥉\nLevel 15+: 🥈\nLevel 25+: 🥇\nLevel 35+: 🚀\nLevel 40+: 🔱\nLevel 45+: 🔑\nLevel 50+: 💎\nLevel 65+: 👻\nLevel 75+: 👹\nLevel 85+: 👑\nLevel 95+: 🐲\nLevel 100+: 👽";
 
             const embed = new EmbedBuilder()
                 .setColor('#facc15')
-                .setTitle('Quadro de medalhas 🥇')
+                .setTitle('Quadro de insígneas 🥇')
                 .setDescription(medals);
 
             await interaction.editReply({ embeds: [embed] });
