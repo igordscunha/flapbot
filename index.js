@@ -2,33 +2,11 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Collection, GatewayIntentBits, Events, Partials } = require('discord.js');
 const { QuickDB } = require('quick.db');
-const play = require('play-dl');
 const db = new QuickDB();
 const data = require('./data.json')
 require('dotenv').config();
 
 // *************** // **************** //
-
-// async function configurePlayer() {
-//     if (play.sp_validate && play.is_expired()) {
-//         try {
-//             await play.refreshToken();
-//             console.log('[CONFIGURAÇÃO] Token do play-dl atualizado.');
-//         } catch (e) { 
-//             console.error('[CONFIGURAÇÃO] Falha ao atualizar token do play-dl.');
-//         }
-//     }
-//     if (process.env.YOUTUBE_COOKIE) {
-//         try {
-//             await play.setToken({ youtube: { cookie: process.env.YOUTUBE_COOKIE } });
-//             console.log('[CONFIGURAÇÃO] Cookie do YouTube configurado com sucesso.');
-//         } catch (e) { 
-//             console.error('[CONFIGURAÇÃO] Falha ao configurar cookie do YouTube.');
-//         }
-//     } else {
-//         console.warn('[CONFIGURAÇÃO] Cookie do YouTube não encontrado. O bot pode ser bloqueado.');
-//     }
-// }
 
 const client = new Client({ 
 	intents: [

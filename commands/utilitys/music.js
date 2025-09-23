@@ -1,170 +1,142 @@
-const { SlashCommandBuilder, EmbedBuilder, MessageFlags } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const {
     joinVoiceChannel,
     createAudioPlayer,
     createAudioResource,
-    AudioPlayerStatus,
+    AudioPlayerStatus
 } = require('@discordjs/voice');
 const play = require('play-dl');
 
+// Função auxiliar para tocar a música
+const playSong = async (guildId, client) => {
+    const serverQueue = client.queues.get(guildId);
+    if (!serverQueue) return;
+
+    const song = serverQueue.songs[0];
+
+    if (!song) {
+        if (serverQueue.connection) {
+            serverQueue.connection.destroy();
+        }
+        client.queues.delete(guildId);
+        return;
+    }
+
+    try {
+        const stream = await play.stream(song.url);
+        const resource = createAudioResource(stream.stream, { inputType: stream.type });
+        serverQueue.player.play(resource);
+
+        serverQueue.player.once(AudioPlayerStatus.Idle, () => {
+             if (serverQueue.connection) {
+                serverQueue.connection.destroy();
+            }
+            client.queues.delete(guildId);
+        });
+
+        const embed = new EmbedBuilder()
+            .setColor('#ff5500')
+            .setTitle('🎧 Tocando Agora')
+            .setDescription(`**[${song.title}](${song.url})**`)
+            .setThumbnail(song.thumbnail)
+            .addFields({ name: 'Artista', value: song.artist, inline: true })
+            .setTimestamp();
+        serverQueue.textChannel.send({ embeds: [embed] });
+
+    } catch (error) {
+        console.error(`[ERRO STREAM] Erro ao criar o stream para ${song.url}:`, error.message);
+        serverQueue.textChannel.send(`Ocorreu um erro ao tentar tocar **${song.title}**. Pulando para a próxima, se houver.`);
+        if (serverQueue.connection) {
+            serverQueue.connection.destroy();
+        }
+        client.queues.delete(guildId);
+    }
+};
 
 module.exports = {
-    cooldown: 5,
     data: new SlashCommandBuilder()
-        .setName('musica')
-        .setDescription('Comandos relacionados a música.')
+        .setName('music')
+        .setDescription('Comandos de música via SoundCloud.')
         .addSubcommand(subcommand =>
             subcommand
                 .setName('play')
-                .setDescription('Toca uma música. Substitui a atual se houver uma.')
-                .addStringOption(option => option.setName('musica').setDescription('Nome ou URL da música.').setRequired(true)))
+                .setDescription('Toca uma música do SoundCloud.')
+                .addStringOption(option => option.setName('musica').setDescription('Nome ou URL da música no SoundCloud.').setRequired(true)))
         .addSubcommand(subcommand =>
             subcommand
                 .setName('stop')
                 .setDescription('Para a música e desconecta o bot.')),
 
     async execute(interaction) {
-        const { options, member, guild } = interaction;
-        const client = interaction.client; 
+        const { options, member, guild, client } = interaction;
         const voiceChannel = member.voice.channel;
 
         if (!voiceChannel) {
-            return interaction.reply({ content: 'Você precisa estar em um canal de voz para usar este comando!', flags: MessageFlags.Ephemeral });
+            return interaction.reply({ content: 'Você precisa estar em um canal de voz para usar este comando!', ephemeral: true });
         }
-
-        let serverInstance = client.queues.get(guild.id);
 
         if (options.getSubcommand() === 'play') {
             await interaction.deferReply();
             const query = options.getString('musica');
+            
+            let songInfo;
+            const validation = await play.validate(query);
 
-            try {
-                const searchResult = await play.search(query, { limit: 1 });
-                if (searchResult.length === 0) {
-                    return interaction.editReply('Não encontrei nada com essa busca.');
+            if (validation === 'sc_track') {
+                songInfo = await play.soundcloud(query);
+            } else if (validation === 'sc_playlist') {
+                return interaction.editReply('Desculpe, tocar playlists do SoundCloud ainda não é suportado.');
+            } else {
+                const searchResults = await play.search(query, { source: { soundcloud: 'tracks' } });
+                if (!searchResults.length) {
+                    return interaction.editReply('Não encontrei nenhuma faixa com esse nome no SoundCloud.');
                 }
-                
-                // Apenas playlists não são suportadas neste modo simples.
-                if (searchResult[0].type === 'playlist' || searchResult[0].type === 'album') {
-                    return interaction.editReply('Playlists e álbuns não são suportados no modo simples. Por favor, envie o link de uma única música.');
-                }
-
-                const song = {
-                    title: searchResult[0].title,
-                    url: searchResult[0].url,
-                    duration: searchResult[0].durationRaw,
-                    thumbnail: searchResult[0].thumbnails?.[0]?.url,
-                };
-                
-                // Se não houver uma instância, crie uma nova
-                if (!serverInstance) {
-                    const player = createAudioPlayer();
-                    
-                    // Evento para quando a música termina
-                    player.on(AudioPlayerStatus.Idle, () => {
-                        const oldInstance = client.queues.get(guild.id);
-                        if (oldInstance && oldInstance.connection) {
-                            oldInstance.connection.destroy();
-                        }
-                        client.queues.delete(guild.id);
-                    });
-
-                    // Evento para erros no player
-                    player.on('error', error => {
-                        console.error(`[ERRO PLAYER] ${error.message}`);
-                    });
-
-                    const instanceContruct = {
-                        textChannel: interaction.channel,
-                        voiceChannel: voiceChannel,
-                        connection: null,
-                        player: player,
-                        song: song, // Apenas uma música
-                    };
-
-                    client.queues.set(guild.id, instanceContruct);
-
-                    try {
-                        const connection = joinVoiceChannel({
-                            channelId: voiceChannel.id,
-                            guildId: guild.id,
-                            adapterCreator: guild.voiceAdapterCreator,
-                        });
-                        instanceContruct.connection = connection;
-                        connection.subscribe(player);
-                        
-                        await interaction.editReply({ content: `Iniciando...` });
-                        playSong(guild.id, client);
-
-                    } catch(err) {
-                        console.error("[ERRO CONEXÃO] Erro ao tentar entrar no canal de voz:", err);
-                        client.queues.delete(guild.id);
-                        return interaction.editReply({ content: 'Não consegui entrar no canal de voz.'});
-                    }
-
-                } else { // Se já existe uma instância, apenas substitui a música e toca
-                    serverInstance.song = song;
-                    await interaction.editReply({ content: `Substituindo pela nova música...` });
-                    playSong(guild.id, client);
-                }
-
-            } catch (error) {
-                console.error("Erro no comando play:", error);
-                return interaction.editReply("Ocorreu um erro ao processar sua solicitação.");
-            }
-        }
-        
-        // --- SUBCOMANDO STOP ---
-        else if (options.getSubcommand() === 'stop') {
-            if (!serverInstance) {
-                return interaction.reply({ content: 'Não há nada tocando para parar!', flags: MessageFlags.Ephemeral });
+                songInfo = searchResults[0];
             }
             
-            if (serverInstance.connection) {
-                serverInstance.connection.destroy();
+            const song = {
+                title: songInfo.name,
+                url: songInfo.url,
+                thumbnail: songInfo.thumbnail,
+                artist: songInfo.publisher?.name || 'Artista Desconhecido'
+            };
+
+            const queueContruct = {
+                textChannel: interaction.channel,
+                voiceChannel: voiceChannel,
+                connection: null,
+                player: createAudioPlayer(),
+                songs: [song],
+            };
+
+            client.queues.set(guild.id, queueContruct);
+
+            try {
+                const connection = joinVoiceChannel({
+                    channelId: voiceChannel.id,
+                    guildId: guild.id,
+                    adapterCreator: guild.voiceAdapterCreator,
+                });
+                queueContruct.connection = connection;
+                connection.subscribe(queueContruct.player);
+                playSong(guild.id, client);
+                await interaction.editReply({ content: `🎵 Buscando **${song.title}** no SoundCloud...` });
+
+            } catch (err) {
+                console.log(err);
+                client.queues.delete(guild.id);
+                return interaction.editReply({ content: 'Não consegui entrar no canal de voz!' });
+            }
+        } else if (options.getSubcommand() === 'stop') {
+            const serverQueue = client.queues.get(guild.id);
+            if (!serverQueue) {
+                return interaction.reply({ content: 'Não há nada tocando para parar!', ephemeral: true });
+            }
+            if (serverQueue.connection) {
+                serverQueue.connection.destroy();
             }
             client.queues.delete(guild.id);
-            await interaction.reply('⏹️ Música parada e bot desconectado!');
+            await interaction.reply('⏹️ A música parou e o bot foi desconectado!');
         }
     },
-};
-
-const playSong = async (guildId, client) => {
-    const serverInstance = client.queues.get(guildId);
-    if (!serverInstance) return;
-
-    // Se não há música para tocar, encerra a conexão.
-    if (!serverInstance.song) {
-        if (serverInstance.connection) {
-            serverInstance.connection.destroy();
-        }
-        client.queues.delete(guildId);
-        return;
-    }
-
-    const song = serverInstance.song;
-
-    try {
-        const stream = await play.stream(song.url);
-        const resource = createAudioResource(stream.stream, { inputType: stream.type });
-        
-        serverInstance.player.play(resource);
-
-        const embed = new EmbedBuilder()
-            .setColor('#22c55e')
-            .setTitle('▶️ Tocando Agora')
-            .setDescription(`[${song.title}](${song.url})`)
-            .setThumbnail(song.thumbnail)
-            .addFields({ name: 'Duração', value: song.duration, inline: true })
-            .setTimestamp();
-        serverInstance.textChannel.send({ embeds: [embed] });
-
-    } catch (error) {
-        console.error(`[ERRO STREAM] Erro ao criar o stream para ${song.url}:`, error);
-        serverInstance.textChannel.send(`Ocorreu um erro ao tentar tocar: **${song.title}**.`);
-        if (serverInstance.connection) {
-            serverInstance.connection.destroy();
-        }
-        client.queues.delete(guildId);
-    }
 };
