@@ -2,11 +2,27 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Collection, GatewayIntentBits, Events, Partials } = require('discord.js');
 const { QuickDB } = require('quick.db');
+const play = require('play-dl');
 const db = new QuickDB();
 const data = require('./data.json')
 require('dotenv').config();
 
 // *************** // **************** //
+
+
+async function configurePlayer(){
+    try{
+        const soundcloud_client_id = await play.getFreeClientID();
+        await play.setToken({
+            soundcloud : {
+                client_id : soundcloud_client_id
+            }
+        })
+        console.log("[CONFIGURAÇÃO]: Client ID do SoundCloud configurado com sucesso.");
+    } catch(e){
+        console.error("[CONFIGURAÇÃO]: Falha ao configurar Client ID do SoundCloud", e.message);
+    }
+}
 
 const client = new Client({ 
 	intents: [
@@ -61,9 +77,9 @@ for (const file of eventFiles) {
 	}
 }
 
-client.once(Events.ClientReady, c => {
+client.once(Events.ClientReady, async c => {
 	console.log(`Tudo pronto! Logado como ${c.user.tag}`);
-    //configurePlayer();
+    await configurePlayer();
 	setInterval(updateVoiceXP, 60000);
 });
 
