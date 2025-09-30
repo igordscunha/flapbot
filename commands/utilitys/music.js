@@ -7,7 +7,9 @@ const {
 } = require('@discordjs/voice');
 const play = require('play-dl');
 
-// Função auxiliar para tocar a música
+// ------------- // -------------- // --------------- //
+
+// Função auxiliar (PLAYSONG)
 const playSong = async (guildId, client) => {
     const serverQueue = client.queues.get(guildId);
     if (!serverQueue) return;
@@ -35,7 +37,7 @@ const playSong = async (guildId, client) => {
         });
 
         const embed = new EmbedBuilder()
-            .setColor('#ff5500')
+            .setColor('#e1672bff')
             .setTitle('🎧 Tocando Agora')
             .setDescription(`**[${song.title}](${song.url})**`)
             .setThumbnail(song.thumbnail)
