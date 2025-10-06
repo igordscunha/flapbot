@@ -123,14 +123,14 @@ async function updateVoiceXP() {
     client.guilds.cache.forEach(guild => {
         guild.members.cache.forEach(async member => {
             if (member.voice.channel && !member.voice.selfDeaf && !member.voice.serverMute) {
-                 const xpToGive = 10; // XP fixo por minuto em voz
-                 const currentXP = (await db.get(`xp_${guild.id}_${member.id}`)) || 0;
-                 const currentLevel = (await db.get(`level_${guild.id}_${member.id}`)) || 1;
-                 const newXP = currentXP + xpToGive;
-                 const nextLevelXP = 5 * (currentLevel ** 2) + 50 * currentLevel + 100;
+                const xpToGive = 10; // XP fixo por minuto em voz
+                const currentXP = (await db.get(`xp_${guild.id}_${member.id}`)) || 0;
+                const currentLevel = (await db.get(`level_${guild.id}_${member.id}`)) || 1;
+                const newXP = currentXP + xpToGive;
+                const nextLevelXP = 5 * (currentLevel ** 2) + 50 * currentLevel + 100;
 
 
-                 if (newXP >= nextLevelXP) {
+                if (newXP >= nextLevelXP) {
                     const newLevel = currentLevel + 1;
                     await db.set(`level_${guild.id}_${member.id}`, newLevel);
                     await db.set(`xp_${guild.id}_${member.id}`, 0);
@@ -158,7 +158,7 @@ async function updateVoiceXP() {
                         console.error(`Nenhum canal de texto encontrado em ${guild.id}`);
                         return;
                     }
-  
+
                     const envioMensagem = await db.get('envio_mensagem') || 0;
 
                     if(envioMensagem == 1){
@@ -168,7 +168,7 @@ async function updateVoiceXP() {
                     await updateNicknameBadge(member, newLevel)
                 } else {
                     await db.set(`xp_${guild.id}_${member.id}`, newXP);
-                 }
+                }
             }
         });
     });
@@ -189,10 +189,15 @@ async function updateNicknameBadge(member, newLevel) {
 
     try {
         let currentName = member.nickname || member.user.globalName || member.user.username;
+        const badges = Object.values(data.levelBadges);
 
-        Object.values(data.levelBadges).forEach(badge => {
-            currentName = currentName.replace(badge, '').trim();
-        });
+        while(badges.some(b => currentName.includes(b))){
+            for(const badge of badges){
+                if (currentName.includes(badge)){
+                    currentName = currentName.replace('\uDBFF\uDFFF', '').split(badge).join('').trim();
+                }
+            }
+        }
 
         const newNickname = `${newBadge} ${currentName}`;
         
