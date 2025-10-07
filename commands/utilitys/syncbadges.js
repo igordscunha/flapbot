@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 const { QuickDB } = require('quick.db');
 const db = new QuickDB();
-const { updateNicknameBadge } = require('../../index.js');
+const { updateNicknameBadge } = require('../../utils/nicknameManager.js');
 
 module.exports = {
     data: new SlashCommandBuilder()

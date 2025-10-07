@@ -4,7 +4,6 @@ const { Client, Collection, GatewayIntentBits, Events, Partials } = require('dis
 const { QuickDB } = require('quick.db');
 const play = require('play-dl');
 const db = new QuickDB();
-const data = require('./data.json')
 require('dotenv').config();
 
 // *************** // **************** //
@@ -172,44 +171,6 @@ async function updateVoiceXP() {
             }
         });
     });
-}
-
-// FUNÇÃO PARA ATUALIZAR O NICK COM A INSÍGNIA
-
-export async function updateNicknameBadge(member, newLevel) {
-    let newBadge = null;
-    for (const level of Object.keys(data.levelBadges).sort((a, b) => b - a)) {
-        if (newLevel >= level) {
-            newBadge = data.levelBadges[level];
-            break;
-        }
-    }
-
-    if (!newBadge) return;
-
-    try {
-        let currentName = member.nickname || member.user.globalName || member.user.username;
-        
-        const allBadges = Object.values(data.levelBadges).map(b => b.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
-        const badgeRegex = new RegExp(allBadges.join('|'), 'gu');
-        let cleanName = currentName.replace(badgeRegex, '').trim();
-
-        const newNickname = newBadge ? `${newBadge} ${cleanName}` : cleanName;
-        
-        if (newNickname.length > 32) {
-            console.log(`Não foi possível atualizar o apelido de ${member.user.username} por exceder 32 caracteres.`);
-            return;
-        }
-
-        if(member.nickname !== newNickname){
-            await member.setNickname(newNickname);
-            console.log(`Apelido de ${member.user.username} atualizado para: ${newNickname}`);
-        }
-
-
-    } catch (error) {
-        console.error(`Falha ao atualizar o apelido de ${member.user.username}:`, error.message);
-    }
 }
 
 client.login(token);
