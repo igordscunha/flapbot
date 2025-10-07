@@ -14,10 +14,10 @@ async function updateNicknameBadge(member, newLevel) {
     }
 
     try {
-        let currentName = member.nickname || member.user.globalName || member.user.username;
+        let currentName = member.nickname;
         const detectiveEmoji = String.fromCodePoint(0x1F575, 0xFE0F);
 
-        const filtered = chars.filter(c => c !== detectiveEmoji).join('').trim();
+        // const filtered = chars.filter(c => c !== detectiveEmoji).join('').trim();
 
         // if(filtered !== (currentName)){
         //     await member.setNickname(filtered, 'Removendo emoji detetive');
