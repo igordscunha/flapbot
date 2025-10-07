@@ -16,10 +16,11 @@ async function updateNicknameBadge(member, newLevel) {
     try {
         let currentName = member.nickname || member.user.globalName || member.user.username;
         const detectiveEmoji = String.fromCodePoint(0x1F575, 0xFE0F);
+        const detectiveRegex = /\u{1F575}\u{FE0F}/gu;
 
         
         // Cria uma Expressão Regular que encontra QUALQUER badge da sua lista e a remove.
-        const allBadges = [detectiveEmoji, ...Object.values(data.levelBadges)].map(b => b.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+        const allBadges = Object.values(data.levelBadges).map(b => b.replace(/[.*+?^${}()|[\]\\]\u{1F575}\u{FE0F}/gu, '\\$&'));
         const badgeRegex = new RegExp(allBadges.join('|'), 'gu');
         
         let cleanName = currentName.normalize('NFC').replace(badgeRegex, '').trim();
