@@ -15,7 +15,7 @@ async function updateNicknameBadge(member, newLevel) {
 
     try {
         let currentName = member.nickname || member.user.globalName || member.user.username;
-        const detectiveEmoji = String.fromCodePoint('\u{1F575} \u{FE0F}');
+        const detectiveEmoji = String.fromCodePoint('U+1F575', 'U+FE0F');
         const chars = Array.from(currentName);
 
         const filtered = chars.filter(c => c !== detectiveEmoji).join('').trim();
