@@ -17,7 +17,15 @@ async function updateNicknameBadge(member, newLevel) {
         let currentName = member.nickname || member.user.globalName || member.user.username;
         
         // Cria uma Expressão Regular que encontra QUALQUER badge da sua lista e a remove.
-        const allBadges = Object.values(data.levelBadges).map(b => b.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+        const allBadges = Object.values(data.levelBadges).map(b => {
+            // Se o badge for o do detetive, usamos um padrão especial.
+            if (b.includes('🕵️')) {
+                // \u1F575 é o detetive, \uFE0F é o seletor de cor. O '?' torna o seletor opcional.
+                return '\u1F575\uFE0F?'; 
+            }
+            // Para todos os outros emojis, usamos o "escape" padrão.
+            return b.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        });
         const badgeRegex = new RegExp(allBadges.join('|'), 'gu');
         
         let cleanName = currentName.replace(badgeRegex, '').trim();
