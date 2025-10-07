@@ -176,7 +176,7 @@ async function updateVoiceXP() {
 
 // FUNÇÃO PARA ATUALIZAR O NICK COM A INSÍGNIA
 
-async function updateNicknameBadge(member, newLevel) {
+export async function updateNicknameBadge(member, newLevel) {
     let newBadge = null;
     for (const level of Object.keys(data.levelBadges).sort((a, b) => b - a)) {
         if (newLevel >= level) {
