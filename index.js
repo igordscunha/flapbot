@@ -189,25 +189,23 @@ async function updateNicknameBadge(member, newLevel) {
 
     try {
         let currentName = member.nickname || member.user.globalName || member.user.username;
-        const badges = Object.values(data.levelBadges);
+        
+        const allBadges = Object.values(data.levelBadges).map(b => b.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+        const badgeRegex = new RegExp(allBadges.join('|'), 'gu');
+        let cleanName = currentName.replace(badgeRegex, '').trim();
 
-        while(badges.some(b => currentName.includes(b))){
-            for(const badge of badges){
-                if (currentName.includes(badge)){
-                    currentName = currentName.replace('\uDBFF\uDFFF', '').split(badge).join('').trim();
-                }
-            }
-        }
-
-        const newNickname = `${newBadge} ${currentName}`;
+        const newNickname = newBadge ? `${newBadge} ${cleanName}` : cleanName;
         
         if (newNickname.length > 32) {
             console.log(`Não foi possível atualizar o apelido de ${member.user.username} por exceder 32 caracteres.`);
             return;
         }
 
-        await member.setNickname(newNickname);
-        console.log(`Apelido de ${member.user.username} atualizado para: ${newNickname}`);
+        if(member.nickname !== newNickname){
+            await member.setNickname(newNickname);
+            console.log(`Apelido de ${member.user.username} atualizado para: ${newNickname}`);
+        }
+
 
     } catch (error) {
         console.error(`Falha ao atualizar o apelido de ${member.user.username}:`, error.message);
