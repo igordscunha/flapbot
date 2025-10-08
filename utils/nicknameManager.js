@@ -15,17 +15,14 @@ async function updateNicknameBadge(member, newLevel) {
 
     try {
         let currentName = member.nickname  || member.user.globalName || member.user.username;
-        const detectiveEmoji = String.fromCodePoint(0x1F575, 0xFE0F);
-        const detectiveRegex = /(?:\u{1F575}\u{FE0F}?)/gu;
         
         // Cria uma Expressão Regular que encontra QUALQUER badge da sua lista e a remove.
-        const allBadges = [detectiveEmoji, ...Object.values(data.levelBadges)].map(b => b.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+        const allBadges = Object.values(data.levelBadges).map(b => b.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
         const badgeRegex = new RegExp(allBadges.join('|'), 'gu');
         
-        let cleanName = currentName.replace(detectiveRegex, '').replace(/\s{2,}/g, ' ').trim();
+        let cleanName = currentName.replace(badgeRegex, '').trim();
 
-        // Se não houver badge para o nível atual, apenas mantém o nome limpo.
-        const newNickname = newBadge ? `${newBadge} ${cleanName}` : cleanName;
+        const newNickname = `${newBadge} ${cleanName}`
         
         // Evita que o apelido exceda o limite do Discord
         if (newNickname.length > 32) {
