@@ -1,6 +1,6 @@
 const data = require('../data.json');
 
-async function updateNicknameBadge(member, newLevel) {
+export async function updateNicknameBadge(member, newLevel) {
     // Se o membro for o dono do servidor, não faz nada.
     if (member.id === member.guild.ownerId) return;
 
@@ -43,6 +43,3 @@ async function updateNicknameBadge(member, newLevel) {
         }
     }
 }
-
-// Exporta a função para que outros arquivos possam usá-la
-module.exports = { updateNicknameBadge };
