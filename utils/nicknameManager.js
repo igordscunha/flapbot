@@ -44,4 +44,4 @@ async function updateNicknameBadge(member, newLevel) {
     }
 }
 
-export default updateNicknameBadge;
+module.exports = { updateNicknameBadge };
