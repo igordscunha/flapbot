@@ -114,7 +114,7 @@ module.exports = {
         const topList = rankedUsers.slice(0, topToShow);
 
         const embed = new EmbedBuilder()
-          .setColor('#e2a82aff')
+          .setColor('#e2a82a')
           .setTitle(`🏆 Top ${topToShow} do Servidor`);
 
         if (topList.length === 0) {
