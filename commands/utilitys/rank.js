@@ -115,7 +115,7 @@ module.exports = {
 
         const embed = new EmbedBuilder()
           .setColor('#e2a82a')
-          .setTitle(`🏆 Top ${topToShow} do Servidor`);
+          .setTitle(`🏆 Top ${topToShow} - ${interaction.guild.name}`);
 
         if (topList.length === 0) {
           embed.setDescription('Ainda não há ninguém no ranking (exceto o dono).');
@@ -138,9 +138,9 @@ module.exports = {
 
           const rank = i + 1;
           // Mostra o nome de exibição ou um fallback
-          const name = member ? member.user.displayName : `Usuário (ID: ...${userRank.id.slice(-4)})`;
+          const name = member.nickname || member.user.globalName || member.user.username;
           descriptionLines.push(
-            `**${rank}º.** ${name} - Nível ${userRank.level} - ${userRank.xp}`
+            `**${rank}º.** ${name} - Level ${userRank.level}`
           );
         }
 
