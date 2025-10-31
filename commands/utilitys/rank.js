@@ -26,7 +26,7 @@ module.exports = {
     .addSubcommand(sub =>
       sub
         .setName('top')
-        .setDescription('Mostra o top 5 do ranking')
+        .setDescription('Mostra o top server do ranking')
     ),
 
   async execute(interaction) {
