@@ -7,7 +7,7 @@ const clientId = process.env.CLIENT_ID;
 const token = process.env.DISCORD_TOKEN;
 
 const commands = [];
-const foldersPath = path.join(__dirname, '../commands');
+const foldersPath = path.join(__dirname, './commands');
 const commandFolders = fs.readdirSync(foldersPath);
 
 for (const folder of commandFolders) {
@@ -39,6 +39,6 @@ const rest = new REST().setToken(token);
 		console.log(`Successfully reloaded ${data.length} application (/) commands.`);
 	}
 	catch (error) {
-		console.error(error);
+		console.error("Cod01294 Alguma coisa deu errado: ", error);
 	}
 })();
