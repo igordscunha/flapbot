@@ -57,7 +57,7 @@ module.exports = {
 
 
     if (sub === 'insigneas') {
-      const medals = "Level 1+: ☹\nLevel 10+: 🥉\nLevel 20+: 🥈\nLevel 30+: 🥇\nLevel 40+: 🤺\nLevel 45+: 🔱\nLevel 50+: 💠\nLevel 55+: 💎\nLevel 65+: 👻\nLevel 75+: 👹\nLevel 85+: 👑\nLevel 95+: 🐲\nLevel 100+: ☺";
+      const medals = "Level 1+: 🫥\nLevel 10+: 🥉\nLevel 20+: 🥈\nLevel 30+: 🥇\nLevel 40+: 🤺\nLevel 45+: 🔱\nLevel 50+: 💠\nLevel 55+: 💎\nLevel 65+: 👻\nLevel 75+: 👹\nLevel 85+: 👑\nLevel 95+: 🐲\nLevel 100+: 🏆";
 
       const embed = new EmbedBuilder()
         .setColor('#facc15')
